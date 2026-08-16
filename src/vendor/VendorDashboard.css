@@ -1,0 +1,11 @@
+.role-stub {
+  height: calc(100vh - 68px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 2rem;
+}
+.role-stub p { color: var(--color-forest); max-width: 380px; }

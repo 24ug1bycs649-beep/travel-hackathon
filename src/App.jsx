@@ -1,19 +1,21 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
 import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Itinerary from "./pages/Itinerary";
+import TouristDashboard from "./pages/TouristDashboard";
+import VendorDashboard from "./vendor/VendorDashboard";
 import AdminDashboard from "./admin/AdminDashboard";
+import { TripProvider } from "./context/TripContext";
+import "./styles/theme.css";
 
 function App() {
+  const [role, setRole] = useState("tourist");
+
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/itinerary" element={<Itinerary />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-      </Routes>
-    </BrowserRouter>
+    <TripProvider>
+      <Navbar role={role} onRoleChange={setRole} />
+      {role === "tourist" && <TouristDashboard />}
+      {role === "vendor" && <VendorDashboard />}
+      {role === "admin" && <AdminDashboard />}
+    </TripProvider>
   );
 }
 
