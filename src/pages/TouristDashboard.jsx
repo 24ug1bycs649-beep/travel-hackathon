@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import MapView from "../components/MapView";
 import LocationDetailPanel from "../components/LocationDetailPanel";
 import CustomTripPanel from "../components/CustomTripPanel";
+import AiTripPlanner from "../components/AiTripPlanner";
 import { hotspots, categories } from "../data/hotspots";
 import { useTrip } from "../context/TripContext";
 import "./TouristDashboard.css";
@@ -116,11 +117,10 @@ export default function TouristDashboard() {
       )}
 
       {activeTab === "planner" && (
-        <div className="stub-tab">
-          <span className="eyebrow">Phase 3</span>
-          <h3>AI Trip Planner</h3>
-          <p>Coming next — rule-based trip generation from your budget, days, and interests.</p>
-        </div>
+        <AiTripPlanner
+          onSelectPlace={handleSelectPlace}
+          onPlanGenerated={() => setActiveTab("home")}
+        />
       )}
       {activeTab === "eco" && (
         <div className="stub-tab">
