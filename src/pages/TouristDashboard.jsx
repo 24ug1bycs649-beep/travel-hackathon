@@ -94,6 +94,7 @@ export default function TouristDashboard() {
                   hotspots={filtered}
                   onSelectPlace={handleSelectPlace}
                   tripPlaces={tripPlaces}
+                  routeMode={routeMode}
                 />
                 <CustomTripPanel routeMode={routeMode} onRouteModeChange={setRouteMode} />
               </div>

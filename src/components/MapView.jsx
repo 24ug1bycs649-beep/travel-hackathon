@@ -1,7 +1,18 @@
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./MapView.css";
+
+const DAY_COLORS = ["#C1502E", "#2F4B3C", "#D9A441", "#8C2F1B", "#3E624F"];
+
+// Splits an ordered list of trip places into day-wise groups (max 3 stops/day).
+export function splitIntoDays(places, perDay = 3) {
+  const days = [];
+  for (let i = 0; i < places.length; i += perDay) {
+    days.push(places.slice(i, i + perDay));
+  }
+  return days;
+}
 
 const JHARKHAND_CENTER = [23.6102, 85.2799];
 
@@ -30,9 +41,28 @@ function RouteFitter({ places }) {
   return null;
 }
 
-export default function MapView({ hotspots, onSelectPlace, tripPlaces = [] }) {
+export default function MapView({ hotspots, onSelectPlace, tripPlaces = [], routeMode = "full" }) {
+  const dayGroups = routeMode === "daywise" ? splitIntoDays(tripPlaces) : [tripPlaces];
+  const showLegend = routeMode === "daywise" && dayGroups.filter((g) => g.length > 1).length > 1;
+
   return (
-    <MapContainer
+    <div className="map-wrapper">
+      {showLegend && (
+        <div className="map-day-legend">
+          {dayGroups.map((group, i) =>
+            group.length > 0 ? (
+              <span key={i} className="map-day-legend__item">
+                <span
+                  className="map-day-legend__dot"
+                  style={{ background: DAY_COLORS[i % DAY_COLORS.length] }}
+                />
+                Day {i + 1}
+              </span>
+            ) : null
+          )}
+        </div>
+      )}
+      <MapContainer
       center={JHARKHAND_CENTER}
       zoom={7}
       className="map-container"
@@ -64,7 +94,24 @@ export default function MapView({ hotspots, onSelectPlace, tripPlaces = [] }) {
         </Marker>
       ))}
 
+      {tripPlaces.length > 1 &&
+        dayGroups.map((group, i) =>
+          group.length > 1 ? (
+            <Polyline
+              key={i}
+              positions={group.map((p) => [p.lat, p.lng])}
+              pathOptions={{
+                color: routeMode === "daywise" ? DAY_COLORS[i % DAY_COLORS.length] : "#C1502E",
+                weight: 4,
+                opacity: 0.85,
+                dashArray: routeMode === "daywise" ? "8 6" : null,
+              }}
+            />
+          ) : null
+        )}
+
       {tripPlaces.length > 1 && <RouteFitter places={tripPlaces} />}
     </MapContainer>
+    </div>
   );
 }
