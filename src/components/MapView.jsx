@@ -15,6 +15,12 @@ export function splitIntoDays(places, perDay = 3) {
 }
 
 const JHARKHAND_CENTER = [23.6102, 85.2799];
+// Rough bounding box of Jharkhand state — keeps the map from panning into
+// neighboring states (Bihar, WB, Odisha, Chhattisgarh, UP).
+const JHARKHAND_BOUNDS = [
+  [21.9, 83.3], // southwest
+  [25.4, 87.6], // northeast
+];
 
 function makeIcon(category) {
   const color = category === "eco" ? "#2F4B3C" : "#C1502E";
@@ -64,7 +70,10 @@ export default function MapView({ hotspots, onSelectPlace, tripPlaces = [], rout
       )}
       <MapContainer
       center={JHARKHAND_CENTER}
-      zoom={7}
+      zoom={8}
+      minZoom={7}
+      maxBounds={JHARKHAND_BOUNDS}
+      maxBoundsViscosity={1.0}
       className="map-container"
       scrollWheelZoom={true}
     >

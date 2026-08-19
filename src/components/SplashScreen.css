@@ -1,0 +1,120 @@
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: var(--color-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Sohrai-style radiating geometric pattern in the background */
+.splash__pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image:
+    repeating-linear-gradient(45deg, var(--color-terracotta) 0 2px, transparent 2px 40px),
+    repeating-linear-gradient(-45deg, var(--color-ochre) 0 2px, transparent 2px 40px);
+}
+
+.splash__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  animation: splash-fade-in 0.9s ease both;
+}
+
+.splash__eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-ochre);
+  margin-bottom: 0.75rem;
+}
+
+.splash__title {
+  margin: 0;
+  line-height: 1.05;
+}
+.splash__title-line {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(3.5rem, 14vw, 8rem);
+  color: var(--color-bone);
+  letter-spacing: -0.01em;
+}
+.splash__title-line--accent {
+  color: var(--color-terracotta);
+  font-size: clamp(2.5rem, 10vw, 6rem);
+}
+
+.splash__tagline {
+  color: rgba(242, 232, 216, 0.75);
+  font-size: 1rem;
+  margin: 1.25rem 0 0;
+  letter-spacing: 0.02em;
+}
+
+.splash__enter-hint {
+  margin-top: 2.5rem;
+  font-size: 0.78rem;
+  color: rgba(242, 232, 216, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  animation: splash-pulse 2s ease-in-out infinite;
+}
+
+.splash__ring {
+  display: none;
+}
+
+@keyframes splash-fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes splash-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+/* Exit animation: content and whole splash scale up and widen outward
+   while fading, revealing the app underneath */
+.splash--exiting {
+  animation: splash-out 0.85s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.splash--exiting .splash__content {
+  animation: splash-content-out 0.6s ease forwards;
+}
+.splash--exiting .splash__pattern {
+  animation: splash-pattern-out 0.6s ease forwards;
+}
+
+@keyframes splash-out {
+  0% { opacity: 1; transform: scale(1); }
+  60% { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+@keyframes splash-content-out {
+  to { opacity: 0; transform: scale(1.1); }
+}
+@keyframes splash-pattern-out {
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash__content,
+  .splash__enter-hint,
+  .splash--exiting,
+  .splash--exiting .splash__content,
+  .splash--exiting .splash__pattern {
+    animation: none !important;
+  }
+}
