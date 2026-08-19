@@ -3,6 +3,8 @@ import MapView from "../components/MapView";
 import LocationDetailPanel from "../components/LocationDetailPanel";
 import CustomTripPanel from "../components/CustomTripPanel";
 import AiTripPlanner from "../components/AiTripPlanner";
+import EcoTrekker from "../components/EcoTrekker";
+import Marketplace from "../components/Marketplace";
 import { hotspots, categories } from "../data/hotspots";
 import { useTrip } from "../context/TripContext";
 import "./TouristDashboard.css";
@@ -122,20 +124,8 @@ export default function TouristDashboard() {
           onPlanGenerated={() => setActiveTab("home")}
         />
       )}
-      {activeTab === "eco" && (
-        <div className="stub-tab">
-          <span className="eyebrow">Phase 6</span>
-          <h3>Eco Trekker</h3>
-          <p>Coming later — eco-points, GPS check-ins, and the UPI scanner flow.</p>
-        </div>
-      )}
-      {activeTab === "marketplace" && (
-        <div className="stub-tab">
-          <span className="eyebrow">Phase 7</span>
-          <h3>Marketplace</h3>
-          <p>Coming later — artisan crafts, AR preview, and artist profiles.</p>
-        </div>
-      )}
+      {activeTab === "eco" && <EcoTrekker />}
+      {activeTab === "marketplace" && <Marketplace />}
 
       <LocationDetailPanel
         place={selectedPlace}
