@@ -272,3 +272,10 @@
   .approved-header { padding: 1.5rem; }
   .approved-check { font-size: 2rem; }
 }
+
+.form-error {
+  color: var(--color-rust);
+  font-size: 0.85rem;
+  margin: -0.5rem 0 1rem;
+  font-weight: 600;
+}

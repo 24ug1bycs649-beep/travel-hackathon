@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { submitVendorRegistration } from "../services/vendorService";
 import "./VendorDashboard.css";
 
 export default function VendorDashboard() {
@@ -7,6 +8,8 @@ export default function VendorDashboard() {
   const [vendor, setVendor] = useState(null);
   const [isApproved, setIsApproved] = useState(false);
   const [craftPhotos, setCraftPhotos] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -27,18 +30,36 @@ export default function VendorDashboard() {
     setFormData((prev) => ({ ...prev, idProofFile: e.target.files[0] }));
   }
 
-  function handleSubmitRegistration(e) {
+  async function handleSubmitRegistration(e) {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone) {
       alert("Please fill all required fields");
       return;
     }
-    setVendor({
-      ...formData,
-      vendorId: `VND-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-      registeredAt: new Date().toLocaleDateString(),
-    });
-    setVendorState("pending");
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      // idProofFile is a File object — not stored in Firestore directly here
+      // (that needs Firebase Storage, see idProofFile note below). We store
+      // just the filename as a placeholder reference for now.
+      const { idProofFile, ...vendorFields } = formData;
+      const firestoreId = await submitVendorRegistration({
+        ...vendorFields,
+        idProofFileName: idProofFile?.name || null,
+      });
+      setVendor({
+        ...formData,
+        firestoreId,
+        vendorId: `VND-${firestoreId.slice(0, 9).toUpperCase()}`,
+        registeredAt: new Date().toLocaleDateString(),
+      });
+      setVendorState("pending");
+    } catch (err) {
+      console.error("Vendor registration failed:", err);
+      setSubmitError("Something went wrong submitting your registration. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function handleCraftPhotoUpload(e) {
@@ -138,15 +159,17 @@ export default function VendorDashboard() {
             {formData.idProofFile && <p className="file-name">✓ {formData.idProofFile.name}</p>}
           </div>
 
-          <button type="submit" className="btn-primary vendor-submit">
-            Submit Registration
+          {submitError && <p className="form-error">{submitError}</p>}
+
+          <button type="submit" className="btn-primary vendor-submit" disabled={submitting}>
+            {submitting ? "Submitting..." : "Submit Registration"}
           </button>
         </form>
       </div>
     );
   }
 
-  // Pending approval view
+  // Pending approval view (only if not yet approved)
   if (vendorState === "pending" && !isApproved) {
     return (
       <div className="vendor-dashboard">
